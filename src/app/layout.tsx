@@ -119,7 +119,7 @@ export default function RootLayout({
     return (
         <html lang='en' className={`${basicallyASansSerif.className} h-full`}>
             <body
-                className={`${basicallyAMono.variable} antialiased flex flex-col h-full`}
+                className={`${basicallyAMono.variable} antialiased flex flex-col h-full bg-gray-900 text-white`}
             >
                 <div className='flex-grow'>
                     {children}
