@@ -192,12 +192,12 @@ export default function RootLayout({
     }, []);
 
     return (
-        <html lang='en' className={`${basicallyASansSerif.className} h-full`}>
+        <html lang='en' className={`${basicallyASansSerif.className} h-full overflow-hidden`}>
             <body
                 className={`${basicallyAMono.variable} antialiased flex flex-col h-full bg-gray-900 relative overflow-hidden ${textColor}`}
             >
                 <motion.div
-                    className={`absolute inset-0 z-0 bg-gradient-to-br ${backgroundColor}`}
+                    className={`absolute inset-0 z-0 bg-gradient-to-br pointer-events-none ${backgroundColor}`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
@@ -205,7 +205,7 @@ export default function RootLayout({
                 {blobPositions.map((position, index) => (
                     <motion.div
                         key={index}
-                        className={`absolute w-96 h-96 rounded-full blur-3xl ${blobColor}`}
+                        className={`absolute w-96 h-96 rounded-full blur-3xl pointer-events-none ${blobColor}`}
                         style={position}
                         initial={{ opacity: 0 }}
                         animate={{
