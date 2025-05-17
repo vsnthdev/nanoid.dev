@@ -6,9 +6,11 @@ import { customAlphabet } from 'nanoid'
 import { RefreshCcw, Copy, Settings, ClipboardCheckIcon } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { useRefresh } from '../context/refresh-context'
 
 export default function Home() {
     const [id, setId] = useState('••••••')
+    const { setRefreshTrigger } = useRefresh()
 
     const generateId = customAlphabet(
         '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
@@ -42,6 +44,10 @@ export default function Home() {
                     )} />
                     <motion.button
                         className='relative font-medium gap-x-2 flex items-center px-3 py-3 md:px-3 md:py-2 rounded-md bg-slate-950/60 backdrop-filter backdrop-blur-lg text-white text-sm transition-all hover:bg-slate-950/70 border border-slate-800'
+                        onClick={() => {
+                            setId(generateId())
+                            setRefreshTrigger(prev => prev + 1)
+                        }}
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.2 }}
                     >

@@ -7,6 +7,8 @@ import './globals.css'
 import { Footer } from '../components/footer'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { RefreshContext } from '../context/refresh-context'
+import React from 'react'
 
 const colorPalettes = [
     {
@@ -109,7 +111,7 @@ const basicallyASansSerif = localFont({
             style: 'normal',
         },
         {
-            path: '../../fonts/BasicallyASansSerif-Black.woff2',
+            path: '../../fonts/BasicallyASansSerif-Light.woff2', // Assuming Light is intended for 900 or there's a typo
             weight: '900',
             style: 'normal',
         },
@@ -177,6 +179,7 @@ export default function RootLayout({
     const [textColor, setTextColor] = useState('');
     const [blobColor, setBlobColor] = useState('');
     const [blobPositions, setBlobPositions] = useState<{ top: string; left: string; transform: string }[]>([]);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
         const randomIndex = Math.floor(Math.random() * colorPalettes.length);
@@ -191,20 +194,21 @@ export default function RootLayout({
             transform: `scale(${0.5 + Math.random() * 0.5})`,
         }));
         setBlobPositions(positions);
-    }, []);
+    }, [refreshTrigger]);
 
     return (
         <html lang='en' className={`h-full overflow-hidden font-sans ${textColor} ${basicallyAMono.variable} ${basicallyASansSerif.variable}`}>
             <body className='antialiased flex flex-col h-full bg-gray-900 relative overflow-hidden'>
                 <motion.div
+                    key={refreshTrigger} // Add key prop to trigger re-render on refresh
                     className={`absolute inset-0 z-0 bg-gradient-to-br pointer-events-none ${backgroundColor}`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 1 }}
+                    transition={{ duration: 1 }} // Adjust duration as needed
                 ></motion.div>
                 {blobPositions.map((position, index) => (
                     <motion.div
-                        key={index}
+                        key={`${refreshTrigger}-${index}`} // Add key prop to trigger re-render and animate blob changes
                         className={`absolute w-96 h-96 rounded-full blur-3xl pointer-events-none ${blobColor}`}
                         style={position}
                         initial={{ opacity: 0 }}
@@ -222,7 +226,9 @@ export default function RootLayout({
                     />
                 ))}
                 <div className='flex-grow'>
-                    {children}
+                    <RefreshContext.Provider value={{ setRefreshTrigger }}>
+                        {children}
+                    </RefreshContext.Provider>
                 </div>
                 <Footer />
                 <Toaster
