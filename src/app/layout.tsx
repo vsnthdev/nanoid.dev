@@ -1,6 +1,8 @@
 'use client'
 
 import localFont from 'next/font/local'
+import { Toaster } from 'sonner'
+import { InfoIcon, CircleAlertIcon, BadgeCheckIcon, TriangleAlertIcon, Loader2Icon } from 'lucide-react'
 import './globals.css'
 import { Footer } from '../components/footer'
 import { useState, useEffect } from 'react'
@@ -192,10 +194,8 @@ export default function RootLayout({
     }, []);
 
     return (
-        <html lang='en' className={`${basicallyASansSerif.className} h-full overflow-hidden`}>
-            <body
-                className={`${basicallyAMono.variable} antialiased flex flex-col h-full bg-gray-900 relative overflow-hidden ${textColor}`}
-            >
+        <html lang='en' className={`h-full overflow-hidden font-sans ${textColor} ${basicallyAMono.variable} ${basicallyASansSerif.variable}`}>
+            <body className='antialiased flex flex-col h-full bg-gray-900 relative overflow-hidden'>
                 <motion.div
                     className={`absolute inset-0 z-0 bg-gradient-to-br pointer-events-none ${backgroundColor}`}
                     initial={{ opacity: 0 }}
@@ -225,6 +225,38 @@ export default function RootLayout({
                     {children}
                 </div>
                 <Footer />
+                <Toaster
+                    visibleToasts={3}
+                    position='bottom-center'
+                    duration={60000}
+                    offset={{
+                        bottom: 40
+                    }}
+                    mobileOffset={{
+                        bottom: 40,
+                        left: 60,
+                        right: 60
+                    }}
+                    toastOptions={{
+                        unstyled: true,
+                        classNames: {
+                            title: 'text-sm font-sans font-semibold',
+                            icon: '[&>svg]:size-5 mr-3',
+                            description: 'text-xs opacity-70 font-sans',
+                            loading: 'bg-white text-slate-700 border-slate-200 p-4',
+                            toast: 'w-full rounded-2xl shadow-xl flex items-center space-x-1 p-4',
+                            default: '[&:not([data-type])]:bg-black/60 [&:not([data-type])]:text-white [&:not([data-type])]:backdrop-blur-sm [&:not([data-type])]:border [&:not([data-type])]:border-white/30',
+                        },
+                    }}
+                    icons={{
+                        info: <InfoIcon />,
+                        error: <CircleAlertIcon />,
+                        success: <BadgeCheckIcon />,
+                        warning: <TriangleAlertIcon />,
+                        loading: <Loader2Icon className='animate-spin' />,
+                    }}
+                    gap={15}
+                />
             </body>
         </html>
     )

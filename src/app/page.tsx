@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { customAlphabet } from 'nanoid'
-import { RefreshCcw, Copy, Settings } from 'lucide-react'
+import { RefreshCcw, Copy, Settings, ClipboardCheckIcon } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { cn } from '@/lib/utils' // Assuming you have a utility for classnames like cn
+import { cn } from '@/lib/utils'
 
 export default function Home() {
     const [id, setId] = useState('••••••')
@@ -20,6 +21,9 @@ export default function Home() {
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(id)
+        toast('Copied to clipboard!', {
+            icon: <ClipboardCheckIcon size={10} />
+        })
     }
 
     return (
@@ -37,11 +41,12 @@ export default function Home() {
                         'group-hover:opacity-100 group-hover:blur-xl'
                     )} />
                     <motion.button
-                        className='relative font-medium gap-x-2 flex items-center px-3 py-3 md:px-3 md:py-2 rounded-md bg-slate-950/90 backdrop-filter backdrop-blur-lg text-white text-sm transition-all hover:bg-slate-950/70 border border-slate-800'
+                        className='relative font-medium gap-x-2 flex items-center px-3 py-3 md:px-3 md:py-2 rounded-md bg-slate-950/60 backdrop-filter backdrop-blur-lg text-white text-sm transition-all hover:bg-slate-950/70 border border-slate-800'
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <RefreshCcw size={15} />
+                        <RefreshCcw size={17} className='md:hidden' />
+                        <RefreshCcw size={15} className='hidden md:block' />
                         <span className='hidden md:inline'>Refresh</span>
                     </motion.button>
                 </div>
@@ -51,12 +56,13 @@ export default function Home() {
                         'group-hover:opacity-100 group-hover:blur-xl'
                     )} />
                     <motion.button
-                        className='relative font-medium gap-x-2 flex items-center px-3 py-3 md:px-3 md:py-2 rounded-md bg-slate-950/90 backdrop-filter backdrop-blur-lg text-white text-sm transition-all hover:bg-slate-950/70 border border-slate-800'
+                        className='relative font-medium gap-x-2 flex items-center px-3 py-3 md:px-3 md:py-2 rounded-md bg-slate-950/60 backdrop-filter backdrop-blur-lg text-white text-sm transition-all hover:bg-slate-950/70 border border-slate-800'
                         onClick={copyToClipboard}
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <Copy size={15} />
+                        <Copy size={17} className='md:hidden' />
+                        <Copy size={15} className='hidden md:block' />
                         <span className='hidden md:inline'>Copy</span>
                     </motion.button>
                 </div>
@@ -66,11 +72,12 @@ export default function Home() {
                         'group-hover:opacity-100 group-hover:blur-xl'
                     )} />
                     <motion.button
-                        className='relative font-medium gap-x-2 flex items-center px-3 py-3 md:px-3 md:py-2 rounded-md bg-slate-950/90 backdrop-filter backdrop-blur-lg text-white text-sm transition-all hover:bg-slate-950/70 border border-slate-800'
+                        className='relative font-medium gap-x-2 flex items-center px-3 py-3 md:px-3 md:py-2 rounded-md bg-slate-950/60 backdrop-filter backdrop-blur-lg text-white text-sm transition-all hover:bg-slate-950/70 border border-slate-800'
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <Settings size={15} />
+                        <Settings size={17} className='md:hidden' />
+                        <Settings size={15} className='hidden md:block' />
                         <span className='hidden md:inline'>Settings</span>
                     </motion.button>
                 </div>
