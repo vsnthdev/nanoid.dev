@@ -9,64 +9,10 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { RefreshContext } from '../context/refresh-context'
 import React from 'react'
+import { useLocalStorage } from 'usehooks-ts'
+import { colors } from '../lib/colors'
 
-const colorPalettes = [
-    {
-        background: 'from-blue-500/40 to-blue-600/40',
-        text: 'text-white',
-        blob: 'bg-blue-400/30',
-    },
-    {
-        background: 'from-sky-500/40 to-sky-600/40',
-        text: 'text-gray-100',
-        blob: 'bg-sky-400/30',
-    },
-    {
-        background: 'from-indigo-500/40 to-indigo-600/40',
-        text: 'text-blue-100',
-        blob: 'bg-indigo-400/30',
-    },
-    {
-        background: 'from-cyan-500/40 to-cyan-600/40',
-        text: 'text-cyan-100',
-        blob: 'bg-cyan-400/30',
-    },
-    {
-        background: 'from-teal-500/40 to-teal-600/40',
-        text: 'text-teal-100',
-        blob: 'bg-teal-400/30',
-    },
-    {
-        background: 'from-blue-600/40 to-blue-700/40',
-        text: 'text-blue-200',
-        blob: 'bg-blue-500/30',
-    },
-    {
-        background: 'from-sky-600/40 to-sky-700/40',
-        text: 'text-sky-200',
-        blob: 'bg-sky-500/30',
-    },
-    {
-        background: 'from-indigo-600/40 to-indigo-700/40',
-        text: 'text-indigo-200',
-        blob: 'bg-indigo-500/30',
-    },
-    {
-        background: 'from-cyan-600/40 to-cyan-700/40',
-        text: 'text-cyan-200',
-        blob: 'bg-cyan-500/30',
-    },
-    {
-        background: 'from-teal-600/40 to-teal-700/40',
-        text: 'text-teal-200',
-        blob: 'bg-teal-500/30',
-    },
-    {
-        background: 'from-amber-500/40 to-amber-600/40',
-        text: 'text-amber-100',
-        blob: 'bg-amber-400/30',
-    },
-];
+
 
 const basicallyASansSerif = localFont({
     src: [
@@ -179,11 +125,16 @@ export default function RootLayout({
     const [textColor, setTextColor] = useState('');
     const [blobColor, setBlobColor] = useState('');
     const [blobPositions, setBlobPositions] = useState<{ top: string; left: string; transform: string }[]>([]);
+    const [previousColorIndex, setPreviousColorIndex] = useLocalStorage('previousColorIndex', -1);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
-        const randomIndex = Math.floor(Math.random() * colorPalettes.length);
-        const randomPalette = colorPalettes[randomIndex];
+        let randomIndex = Math.floor(Math.random() * colors.length);
+        while (randomIndex === previousColorIndex) {
+            randomIndex = Math.floor(Math.random() * colors.length);
+        }
+        setPreviousColorIndex(randomIndex);
+        const randomPalette = colors[randomIndex];
         setBackgroundColor(randomPalette.background);
         setTextColor(randomPalette.text);
         setBlobColor(randomPalette.blob);
@@ -200,28 +151,28 @@ export default function RootLayout({
         <html lang='en' className={`h-full overflow-hidden font-sans ${textColor} ${basicallyAMono.variable} ${basicallyASansSerif.variable}`}>
             <body className='antialiased flex flex-col h-full bg-gray-900 relative overflow-hidden'>
                 <motion.div
-                    key={refreshTrigger} // Add key prop to trigger re-render on refresh
+                    key={refreshTrigger}
                     className={`absolute inset-0 z-0 bg-gradient-to-br pointer-events-none ${backgroundColor}`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 1 }} // Adjust duration as needed
+                    transition={{ duration: 0.5 }}
                 ></motion.div>
                 {blobPositions.map((position, index) => (
                     <motion.div
-                        key={`${refreshTrigger}-${index}`} // Add key prop to trigger re-render and animate blob changes
+                        key={`${refreshTrigger}-${index}`}
                         className={`absolute w-96 h-96 rounded-full blur-3xl pointer-events-none ${blobColor}`}
                         style={position}
                         initial={{ opacity: 0 }}
                         animate={{
                             opacity: 1,
-                            x: Math.random() * 20 - 10, // Random horizontal movement between -10 and 10
-                            y: Math.random() * 20 - 10, // Random vertical movement between -10 and 10
+                            x: Math.random() * 20 - 10,
+                            y: Math.random() * 20 - 10,
                         }}
                         transition={{
-                            duration: 5 + Math.random() * 5, // Random duration between 5 and 10 seconds
+                            duration: 5,
                             repeat: Infinity,
                             repeatType: 'reverse',
-                            delay: 0.5 + index * 0.1, // Staggered fade-in delay
+                            delay: index * 0.1,
                         }}
                     />
                 ))}
