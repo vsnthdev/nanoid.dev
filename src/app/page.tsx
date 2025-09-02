@@ -9,7 +9,8 @@ import { cn } from '@/lib/utils'
 import { useRefresh } from '../context/refresh-context'
 
 export default function Home() {
-    const [id, setId] = useState('••••••')
+    const [id, setId] = useState('      ')
+    const [isLoaded, setIsLoaded] = useState(false)
     const { setRefreshTrigger } = useRefresh()
 
     const generateId = customAlphabet(
@@ -17,8 +18,22 @@ export default function Home() {
         6
     )
 
+    function generateAndStoreNext() {
+        const nextId = generateId()
+        localStorage.setItem('nextNanoid', nextId)
+    }
+
     useEffect(() => {
-        setId(generateId())
+        const storedId = localStorage.getItem('nextNanoid')
+        if (storedId) {
+            setId(storedId)
+            generateAndStoreNext()
+        } else {
+            const newId = generateId()
+            setId(newId)
+            generateAndStoreNext()
+        }
+        setIsLoaded(true)
     }, [])
 
     const copyToClipboard = () => {
@@ -30,13 +45,20 @@ export default function Home() {
 
     return (
         <main className='flex flex-col items-center justify-center h-full'>
-            <a href='https://github.com/vsnthdev/nanoid.dev' target='_blank' rel='noopener noreferrer' className='mb-5 text-2xl text-slate-400 border-slate-400'>
-                nanoid.dev
-            </a>
-            <p className='font-mono cursor-pointer p-2 rounded-md text-6xl lg:text-[200px] font-bold text-slate-100' onClick={copyToClipboard}>
-                {id}
-            </p>
-            <div className='flex space-x-4 mt-10 md:mt-16'>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isLoaded ? 1 : 0 }}
+                transition={{ duration: 0.5 }}
+                className='flex flex-col items-center'
+            >
+                <a href='https://github.com/vsnthdev/nanoid.dev' target='_blank' rel='noopener noreferrer' className='mb-5 text-2xl text-slate-400 border-slate-400'>
+                    nanoid.dev
+                </a>
+                <p className='font-mono cursor-pointer p-2 rounded-md text-6xl lg:text-[200px] font-bold text-slate-100' onClick={copyToClipboard}>
+                    {id}
+                </p>
+                {isLoaded && (
+                    <div className='flex space-x-4 mt-10 md:mt-16'>
                 <div className='relative group'>
                     <div className={cn(
                         'absolute -inset-[2px] rounded-md bg-gradient-to-r from-purple-500 via-cyan-300 to-emerald-400 opacity-0 blur-lg transition-all',
@@ -45,7 +67,14 @@ export default function Home() {
                     <motion.button
                         className='relative font-medium gap-x-2 flex items-center px-3 py-3 md:px-3 md:py-2 rounded-md bg-slate-950/60 backdrop-filter backdrop-blur-lg text-white text-sm transition-all hover:bg-slate-950/70 border border-slate-800'
                         onClick={() => {
-                            setId(generateId())
+                            const storedId = localStorage.getItem('nextNanoid')
+                            if (storedId) {
+                                setId(storedId)
+                                generateAndStoreNext()
+                            } else {
+                                setId(generateId())
+                                generateAndStoreNext()
+                            }
                             setRefreshTrigger(prev => prev + 1)
                         }}
                         whileHover={{ scale: 1.05 }}
@@ -88,6 +117,8 @@ export default function Home() {
                     </motion.button>
                 </div>
             </div>
+                )}
+            </motion.div>
         </main>
     )
 }
