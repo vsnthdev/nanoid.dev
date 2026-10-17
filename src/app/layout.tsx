@@ -1,18 +1,8 @@
-'use client'
-
+import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
-import { Toaster } from 'sonner'
-import { InfoIcon, CircleAlertIcon, BadgeCheckIcon, TriangleAlertIcon, Loader2Icon } from 'lucide-react'
 import './globals.css'
-import { Footer } from '../components/footer'
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { RefreshContext } from '../context/refresh-context'
 import React from 'react'
-import { useLocalStorage } from 'usehooks-ts'
-import { colors } from '../lib/colors'
-
-
+import { ClientLayout } from '../components/client-layout'
 
 const basicallyASansSerif = localFont({
     src: [
@@ -57,7 +47,7 @@ const basicallyASansSerif = localFont({
             style: 'normal',
         },
         {
-            path: '../../fonts/BasicallyASansSerif-Light.woff2', // Assuming Light is intended for 900 or there's a typo
+            path: '../../fonts/BasicallyASansSerif-Light.woff2',
             weight: '900',
             style: 'normal',
         },
@@ -103,12 +93,12 @@ const basicallyAMono = localFont({
             style: 'normal',
         },
         {
-            path: '../../fonts/BasicallyAMono-ExtraLight.woff2', // Assuming ExtraLight is intended for 800 or there's a typo and it should be ExtraBold if available
+            path: '../../fonts/BasicallyAMono-ExtraLight.woff2',
             weight: '800',
             style: 'normal',
         },
         {
-            path: '../../fonts/BasicallyAMono-Bold.woff2', // Assuming Bold is intended for 900 or there's a typo
+            path: '../../fonts/BasicallyAMono-Bold.woff2',
             weight: '900',
             style: 'normal',
         },
@@ -116,116 +106,118 @@ const basicallyAMono = localFont({
     variable: '--font-basically-a-mono',
 })
 
+export const metadata: Metadata = {
+    metadataBase: new URL('https://nanoid.dev'),
+    title: {
+        default: 'NanoID Generator — Fast, Secure Unique IDs Online | nanoid.dev',
+        template: '%s | nanoid.dev',
+    },
+    description:
+        'Generate fast, URL-friendly, cryptographically strong unique NanoID strings instantly in your browser. One-click copy, instant refresh, and zero latency.',
+    applicationName: 'nanoid.dev',
+    keywords: [
+        'nanoid',
+        'nanoid generator',
+        'nano id',
+        'online nanoid generator',
+        'unique id generator',
+        'short id generator',
+        'random string generator',
+        'url friendly id',
+        'uuid alternative',
+        '6 character id generator',
+        'alphanumeric id generator',
+        'developer tools',
+    ],
+    authors: [{ name: 'Vasanth Srivatsa', url: 'https://vsnth.dev' }],
+    creator: 'Vasanth Srivatsa',
+    publisher: 'Vasanth Srivatsa',
+    category: 'developer tools',
+    alternates: {
+        canonical: '/',
+    },
+    openGraph: {
+        title: 'NanoID Generator — Fast, Secure Unique IDs Online | nanoid.dev',
+        description:
+            'Generate fast, URL-friendly, cryptographically strong unique NanoID strings instantly in your browser. One-click copy, instant refresh, and zero latency.',
+        url: 'https://nanoid.dev',
+        siteName: 'nanoid.dev',
+        locale: 'en_US',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'NanoID Generator — Fast, Secure Unique IDs Online | nanoid.dev',
+        description:
+            'Generate fast, URL-friendly, cryptographically strong unique NanoID strings instantly in your browser. One-click copy, instant refresh, and zero latency.',
+        site: '@vsnthdev',
+        creator: '@vsnthdev',
+    },
+    robots: {
+        index: true,
+        follow: true,
+        nocache: false,
+        googleBot: {
+            index: true,
+            follow: true,
+            noimageindex: false,
+            'max-video-preview': -1,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+        },
+    },
+    formatDetection: {
+        email: false,
+        address: false,
+        telephone: false,
+    },
+}
+
+export const viewport: Viewport = {
+    themeColor: '#111827',
+    colorScheme: 'dark',
+    width: 'device-width',
+    initialScale: 1,
+}
+
+const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'nanoid.dev',
+    alternateName: 'NanoID Online Generator',
+    url: 'https://nanoid.dev',
+    description:
+        'Generate fast, URL-friendly, cryptographically strong unique NanoID strings instantly in your browser with one-click copy and zero latency.',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Any',
+    browserRequirements: 'Requires JavaScript',
+    isAccessibleForFree: true,
+    offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+    },
+    author: {
+        '@type': 'Person',
+        name: 'Vasanth Srivatsa',
+        url: 'https://vsnth.dev',
+    },
+    codeRepository: 'https://github.com/vsnthdev/nanoid.dev',
+}
+
 export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode
 }>) {
-    const [backgroundColor, setBackgroundColor] = useState('');
-    const [textColor, setTextColor] = useState('');
-    const [blobColor, setBlobColor] = useState('');
-    const [blobPositions, setBlobPositions] = useState<{ top: string; left: string; scale: number; x: number; y: number }[]>([]);
-    const [previousColorIndex, setPreviousColorIndex] = useLocalStorage('previousColorIndex', -1);
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-    useEffect(() => {
-        let randomIndex = Math.floor(Math.random() * colors.length);
-        while (randomIndex === previousColorIndex) {
-            randomIndex = Math.floor(Math.random() * colors.length);
-        }
-        setPreviousColorIndex(randomIndex);
-        const randomPalette = colors[randomIndex];
-        setBackgroundColor(randomPalette.background);
-        setTextColor(randomPalette.text);
-        setBlobColor(randomPalette.blob);
-
-        const positions = Array.from({ length: 8 }).map(() => ({
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            scale: 0.5 + Math.random() * 0.5,
-            x: Math.random() * 20 - 10,
-            y: Math.random() * 20 - 10,
-        }));
-        setBlobPositions(positions);
-    }, [refreshTrigger]);
-
     return (
-        <html lang='en' className={`h-full overflow-hidden font-sans ${textColor} ${basicallyAMono.variable} ${basicallyASansSerif.variable}`}>
+        <html lang='en' className={`h-full overflow-hidden font-sans ${basicallyAMono.variable} ${basicallyASansSerif.variable}`}>
             <body className='antialiased flex flex-col h-full bg-gray-900 relative overflow-hidden'>
-                <motion.div
-                    key={refreshTrigger}
-                    className={`absolute inset-0 z-0 bg-gradient-to-br pointer-events-none ${backgroundColor}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: backgroundColor ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
-                ></motion.div>
-                {blobPositions.map((position, index) => (
-                    <motion.div
-                        key={`${refreshTrigger}-${index}`}
-                        className={`absolute z-10 w-96 h-96 rounded-full blur-3xl pointer-events-none ${blobColor}`}
-                        style={{ top: position.top, left: position.left }}
-                        initial={{ opacity: 0, scale: position.scale, x: 0, y: 0 }}
-                        animate={{
-                            opacity: 1,
-                            scale: position.scale,
-                            x: position.x,
-                            y: position.y,
-                        }}
-                        transition={{
-                            opacity: { duration: 0.25, ease: 'easeOut' },
-                            x: {
-                                duration: 5,
-                                repeat: Infinity,
-                                repeatType: 'reverse',
-                                delay: index * 0.1,
-                            },
-                            y: {
-                                duration: 5,
-                                repeat: Infinity,
-                                repeatType: 'reverse',
-                                delay: index * 0.1,
-                            },
-                        }}
-                    />
-                ))}
-                <div className='flex-grow'>
-                    <RefreshContext.Provider value={{ setRefreshTrigger }}>
-                        {children}
-                    </RefreshContext.Provider>
-                </div>
-                <Footer />
-                <Toaster
-                    visibleToasts={3}
-                    position='bottom-center'
-                    duration={60000}
-                    offset={{
-                        bottom: 40
-                    }}
-                    mobileOffset={{
-                        bottom: 40,
-                        left: 60,
-                        right: 60
-                    }}
-                    toastOptions={{
-                        unstyled: true,
-                        classNames: {
-                            title: 'text-sm font-sans font-semibold',
-                            icon: '[&>svg]:size-5 mr-3',
-                            description: 'text-xs opacity-70 font-sans',
-                            loading: 'bg-white text-slate-700 border-slate-200 p-4',
-                            toast: 'w-full rounded-2xl shadow-xl flex items-center space-x-1 p-4',
-                            default: '[&:not([data-type])]:bg-black/60 [&:not([data-type])]:text-white [&:not([data-type])]:backdrop-blur-sm [&:not([data-type])]:border [&:not([data-type])]:border-white/30',
-                        },
-                    }}
-                    icons={{
-                        info: <InfoIcon />,
-                        error: <CircleAlertIcon />,
-                        success: <BadgeCheckIcon />,
-                        warning: <TriangleAlertIcon />,
-                        loading: <Loader2Icon className='animate-spin' />,
-                    }}
-                    gap={15}
+                <script
+                    type='application/ld+json'
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
                 />
+                <ClientLayout>{children}</ClientLayout>
             </body>
         </html>
     )
