@@ -33,6 +33,36 @@ export function ClientLayout({
         setTextColor(randomPalette.text)
         setBlobColor(randomPalette.blob)
 
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+            <defs>
+                <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="${randomPalette.favicon.from}" />
+                    <stop offset="100%" stop-color="${randomPalette.favicon.to}" />
+                </linearGradient>
+            </defs>
+            <path d="M16 2C25.5 2 30 6.5 30 16C30 25.5 25.5 30 16 30C6.5 30 2 25.5 2 16C2 6.5 6.5 2 16 2Z" fill="url(#g)" />
+        </svg>`
+        const faviconUrl = `data:image/svg+xml,${encodeURIComponent(svg)}`
+        const existingIcons = document.querySelectorAll<HTMLLinkElement>("link[rel='icon'], link[rel='shortcut icon']")
+        if (existingIcons.length > 0) {
+            existingIcons.forEach((link, idx) => {
+                if (idx === 0) {
+                    link.type = 'image/svg+xml'
+                    link.sizes = 'any'
+                    link.href = faviconUrl
+                } else {
+                    link.remove()
+                }
+            })
+        } else {
+            const link = document.createElement('link')
+            link.rel = 'icon'
+            link.type = 'image/svg+xml'
+            link.sizes = 'any'
+            link.href = faviconUrl
+            document.head.appendChild(link)
+        }
+
         const positions = Array.from({ length: 8 }).map(() => ({
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,

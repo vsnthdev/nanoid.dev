@@ -16,16 +16,20 @@ export default function Icon() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    borderRadius: 8,
-                    background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #064e3b 100%)',
-                    border: '1px solid rgba(56, 189, 248, 0.35)',
-                    color: '#f8fafc',
-                    fontSize: 16,
-                    fontWeight: 800,
-                    letterSpacing: -0.5,
                 }}
             >
-                ID
+                <svg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'>
+                    <defs>
+                        <linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'>
+                            <stop offset='0%' stopColor='#38bdf8' />
+                            <stop offset='100%' stopColor='#0284c7' />
+                        </linearGradient>
+                    </defs>
+                    <path
+                        d='M16 2C25.5 2 30 6.5 30 16C30 25.5 25.5 30 16 30C6.5 30 2 25.5 2 16C2 6.5 6.5 2 16 2Z'
+                        fill='url(#g)'
+                    />
+                </svg>
             </div>
         ),
         {
