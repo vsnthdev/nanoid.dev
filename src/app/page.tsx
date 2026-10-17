@@ -51,20 +51,14 @@ export default function Home() {
                 transition={{ duration: 0.3 }}
                 className='relative z-0 flex flex-col items-center'
             >
-                <a href='https://github.com/vsnthdev/nanoid.dev' target='_blank' rel='noopener noreferrer' className='mb-5 text-2xl text-slate-400 border-slate-400'>
+                <a href='https://github.com/vsnthdev/nanoid.dev' target='_blank' rel='noopener noreferrer' className='mb-5 text-2xl text-white'>
                     nanoid.dev
                 </a>
-                <p className='font-mono cursor-pointer p-2 rounded-md text-6xl lg:text-[200px] font-bold text-slate-100' onClick={copyToClipboard}>
+                <p className='font-mono whitespace-pre cursor-pointer p-2 rounded-md text-6xl lg:text-[200px] font-bold text-slate-100' onClick={copyToClipboard}>
                     {id}
                 </p>
             </motion.div>
-            {isLoaded && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className='relative z-20 flex space-x-4 mt-10 md:mt-16'
-                >
+            <div className='relative z-20 flex space-x-4 mt-10 md:mt-16'>
                 <div className='relative group'>
                     <div className={cn(
                         'absolute -inset-[2px] rounded-md bg-gradient-to-r from-purple-500 via-cyan-300 to-emerald-400 opacity-0 blur-lg transition-all',
@@ -122,8 +116,7 @@ export default function Home() {
                         <span className='hidden md:inline'>Settings</span>
                     </motion.button>
                 </div>
-                </motion.div>
-            )}
+            </div>
         </main>
     )
 }
