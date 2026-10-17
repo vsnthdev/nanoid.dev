@@ -124,7 +124,7 @@ export default function RootLayout({
     const [backgroundColor, setBackgroundColor] = useState('');
     const [textColor, setTextColor] = useState('');
     const [blobColor, setBlobColor] = useState('');
-    const [blobPositions, setBlobPositions] = useState<{ top: string; left: string; transform: string }[]>([]);
+    const [blobPositions, setBlobPositions] = useState<{ top: string; left: string; scale: number; x: number; y: number }[]>([]);
     const [previousColorIndex, setPreviousColorIndex] = useLocalStorage('previousColorIndex', -1);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -142,7 +142,9 @@ export default function RootLayout({
         const positions = Array.from({ length: 8 }).map(() => ({
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            transform: `scale(${0.5 + Math.random() * 0.5})`,
+            scale: 0.5 + Math.random() * 0.5,
+            x: Math.random() * 20 - 10,
+            y: Math.random() * 20 - 10,
         }));
         setBlobPositions(positions);
     }, [refreshTrigger]);
@@ -154,25 +156,35 @@ export default function RootLayout({
                     key={refreshTrigger}
                     className={`absolute inset-0 z-0 bg-gradient-to-br pointer-events-none ${backgroundColor}`}
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
+                    animate={{ opacity: backgroundColor ? 1 : 0 }}
+                    transition={{ duration: 0.3 }}
                 ></motion.div>
                 {blobPositions.map((position, index) => (
                     <motion.div
                         key={`${refreshTrigger}-${index}`}
-                        className={`absolute w-96 h-96 rounded-full blur-3xl pointer-events-none ${blobColor}`}
-                        style={position}
-                        initial={{ opacity: 0 }}
+                        className={`absolute z-10 w-96 h-96 rounded-full blur-3xl pointer-events-none ${blobColor}`}
+                        style={{ top: position.top, left: position.left }}
+                        initial={{ opacity: 0, scale: position.scale, x: 0, y: 0 }}
                         animate={{
                             opacity: 1,
-                            x: Math.random() * 20 - 10,
-                            y: Math.random() * 20 - 10,
+                            scale: position.scale,
+                            x: position.x,
+                            y: position.y,
                         }}
                         transition={{
-                            duration: 5,
-                            repeat: Infinity,
-                            repeatType: 'reverse',
-                            delay: index * 0.1,
+                            opacity: { duration: 0.25, ease: 'easeOut' },
+                            x: {
+                                duration: 5,
+                                repeat: Infinity,
+                                repeatType: 'reverse',
+                                delay: index * 0.1,
+                            },
+                            y: {
+                                duration: 5,
+                                repeat: Infinity,
+                                repeatType: 'reverse',
+                                delay: index * 0.1,
+                            },
                         }}
                     />
                 ))}
